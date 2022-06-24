@@ -1,0 +1,45 @@
+<Project>
+  <Import Project=".\Common.props" />
+  
+  <ItemGroup>
+    <None Include="$(RepoRoot)\logo.JPG" Pack="true" PackagePath=""/>
+  </ItemGroup>
+  
+  <PropertyGroup Label="PackageProperties">
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/vadrsa/simpler</RepositoryUrl>
+    <PackageIcon>logo.JPG</PackageIcon> 
+    <Authors>vadrsa</Authors>
+    <Copyright>Copyright 2023 Davit Asryan</Copyright>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackagePrimaryLicenseFile>$(RepoRoot)\LICENSE.TXT</PackagePrimaryLicenseFile>
+  </PropertyGroup>
+
+  <PropertyGroup Label="SourceLinkProperties">
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+
+  <Target Name="AssemblyVersionTarget" AfterTargets="MinVer" Condition="'$(MinVerVersion)'!='' AND '$(BuildNumber)' != ''">
+
+    <PropertyGroup>
+      <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(BuildNumber)</FileVersion>
+    </PropertyGroup>
+
+    <!-- Note: The '$(TargetFramework)' != '' check here is to reduce log spam
+    in builds like dotnet pack which fire MinVer but don't resolve the actual
+    TargetFramework -->
+    <Message
+      Condition="'$(TargetFramework)' != ''"
+      Importance="high"
+      Text="**AssemblyVersionDebug** TargetFramework: $(TargetFramework), MinVerVersion: $(MinVerVersion), BuildNumber: $(BuildNumber), FileVersion: $(FileVersion), ExposeExperimentalFeatures: $(ExposeExperimentalFeatures)" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="MinVer" PrivateAssets="All" />
+    <!-- <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" /> -->
+    <!-- <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" /> -->
+  </ItemGroup>
+</Project>

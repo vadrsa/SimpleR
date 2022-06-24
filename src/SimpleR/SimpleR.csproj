@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+  	<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+	<Title>SimpleR.Server</Title>
+	<PackageId>SimpleR.Server</PackageId>
+    <PackageTags>simpler websocket aspnetcore</PackageTags>
+    <Configurations>Debug;Release;Publish</Configurations>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' != 'Publish'">
+		<ProjectReference Include="$(RepoRoot)\src\SimpleR.Protocol\SimpleR.Protocol.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Publish'">
+		<PackageReference Include="SimpleR.Protocol" />
+	</ItemGroup>
+</Project>

@@ -3,23 +3,91 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleR", "src\SimpleR.csproj", "{E905ADDC-D30C-4EFF-AC05-F7A62F8FAC8A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{49922A29-C6AC-4852-8596-163816E57B24}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Packages.props = src\Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D1E4601A-E2A0-43AC-8D33-B05D0001C88F}"
+	ProjectSection(SolutionItems) = preProject
+		test\Directory.Build.props = test\Directory.Build.props
+		test\Directory.Packages.props = test\Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleR", "src\SimpleR\SimpleR.csproj", "{20A21F54-8F8C-42FD-9870-CA959E2420AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleR.Protocol", "src\SimpleR.Protocol\SimpleR.Protocol.csproj", "{17EA092C-EA22-4DCF-911D-C59E1483F01C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleR.Protocol.Tests", "test\SimpleR.Protocol.Tests\SimpleR.Protocol.Tests.csproj", "{D5F7A5F2-F59A-4221-8E53-C4DBCAD5107E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "general", "general", "{43182ADA-7F04-4E48-A722-7D5C77125B91}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+		Directory.Packages.props = Directory.Packages.props
+		LICENSE = LICENSE
+		README.md = README.md
+		Common.nonprod.props = Common.nonprod.props
+		Common.props = Common.props
+		Common.prod.props = Common.prod.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingPong.Server.Tests", "test\PingPong.Server.Tests\PingPong.Server.Tests.csproj", "{F8A42439-AA4C-4F97-9EB8-68AB761ED725}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingPong.Server", "test\PingPong.Server\PingPong.Server.csproj", "{588BD3C2-2835-4208-8469-C0652228279D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{813E378E-1E13-4C9E-BBDC-244A6749AB86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Publish|Any CPU = Publish|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E905ADDC-D30C-4EFF-AC05-F7A62F8FAC8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E905ADDC-D30C-4EFF-AC05-F7A62F8FAC8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E905ADDC-D30C-4EFF-AC05-F7A62F8FAC8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E905ADDC-D30C-4EFF-AC05-F7A62F8FAC8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20A21F54-8F8C-42FD-9870-CA959E2420AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20A21F54-8F8C-42FD-9870-CA959E2420AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20A21F54-8F8C-42FD-9870-CA959E2420AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20A21F54-8F8C-42FD-9870-CA959E2420AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20A21F54-8F8C-42FD-9870-CA959E2420AB}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{20A21F54-8F8C-42FD-9870-CA959E2420AB}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{17EA092C-EA22-4DCF-911D-C59E1483F01C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17EA092C-EA22-4DCF-911D-C59E1483F01C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17EA092C-EA22-4DCF-911D-C59E1483F01C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17EA092C-EA22-4DCF-911D-C59E1483F01C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17EA092C-EA22-4DCF-911D-C59E1483F01C}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{17EA092C-EA22-4DCF-911D-C59E1483F01C}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{D5F7A5F2-F59A-4221-8E53-C4DBCAD5107E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5F7A5F2-F59A-4221-8E53-C4DBCAD5107E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5F7A5F2-F59A-4221-8E53-C4DBCAD5107E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5F7A5F2-F59A-4221-8E53-C4DBCAD5107E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5F7A5F2-F59A-4221-8E53-C4DBCAD5107E}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{D5F7A5F2-F59A-4221-8E53-C4DBCAD5107E}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{F8A42439-AA4C-4F97-9EB8-68AB761ED725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8A42439-AA4C-4F97-9EB8-68AB761ED725}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8A42439-AA4C-4F97-9EB8-68AB761ED725}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8A42439-AA4C-4F97-9EB8-68AB761ED725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8A42439-AA4C-4F97-9EB8-68AB761ED725}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{F8A42439-AA4C-4F97-9EB8-68AB761ED725}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{588BD3C2-2835-4208-8469-C0652228279D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{588BD3C2-2835-4208-8469-C0652228279D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{588BD3C2-2835-4208-8469-C0652228279D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{588BD3C2-2835-4208-8469-C0652228279D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{588BD3C2-2835-4208-8469-C0652228279D}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{588BD3C2-2835-4208-8469-C0652228279D}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{813E378E-1E13-4C9E-BBDC-244A6749AB86}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {16103AB9-C01C-45A5-AD4C-93493D8E241E}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{20A21F54-8F8C-42FD-9870-CA959E2420AB} = {49922A29-C6AC-4852-8596-163816E57B24}
+		{17EA092C-EA22-4DCF-911D-C59E1483F01C} = {49922A29-C6AC-4852-8596-163816E57B24}
+		{D5F7A5F2-F59A-4221-8E53-C4DBCAD5107E} = {D1E4601A-E2A0-43AC-8D33-B05D0001C88F}
+		{F8A42439-AA4C-4F97-9EB8-68AB761ED725} = {D1E4601A-E2A0-43AC-8D33-B05D0001C88F}
+		{588BD3C2-2835-4208-8469-C0652228279D} = {D1E4601A-E2A0-43AC-8D33-B05D0001C88F}
 	EndGlobalSection
 EndGlobal

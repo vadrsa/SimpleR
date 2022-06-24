@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Title>SimpleR.Protocol</Title>
+        <PackageId>SimpleR.Protocol</PackageId>
+        <PackageTags>simpler websocket protocol</PackageTags>
+        <Configurations>Debug;Release;Publish</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+</Project>
