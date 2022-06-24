@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Connections;
-using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleR;
 using Microsoft.AspNetCore.Routing;
-using System;
+using SimpleR.Internal;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -13,9 +12,9 @@ namespace Microsoft.AspNetCore.Builder;
 public static class ConnectionEndpointRouteBuilderExtensions
 {
     public static IEndpointConventionBuilder MapWebsocketConnection(this IEndpointRouteBuilder endpoints, string pattern, Action<IConnectionBuilder> configure) =>
-            endpoints.MapWebsocketConnection(pattern, new HttpConnectionDispatcherOptions(), configure);
+        endpoints.MapWebsocketConnection(pattern, new WebSocketConnectionDispatcherOptions(), configure);
 
-    public static IEndpointConventionBuilder MapWebsocketConnection(this IEndpointRouteBuilder endpoints, string pattern, HttpConnectionDispatcherOptions options, Action<IConnectionBuilder> configure)
+    public static IEndpointConventionBuilder MapWebsocketConnection(this IEndpointRouteBuilder endpoints, string pattern, WebSocketConnectionDispatcherOptions options, Action<IConnectionBuilder> configure)
     {
         var dispatcher = endpoints.ServiceProvider.GetRequiredService<WebSocketConnectionDispatcher>();
 

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace SimpleR;
+namespace SimpleR.Internal;
 
 internal partial class WebSocketConnectionManager
 {

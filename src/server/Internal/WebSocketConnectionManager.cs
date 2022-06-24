@@ -2,11 +2,10 @@ using System.Collections.Concurrent;
 using System.IO.Pipelines;
 using System.Net.WebSockets;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
-namespace SimpleR;
+namespace SimpleR.Internal;
 
 internal partial class WebSocketConnectionManager
 {
@@ -20,18 +19,15 @@ internal partial class WebSocketConnectionManager
         _connectionLogger = loggerFactory.CreateLogger<WebSocketConnectionContext>();
     }
 
-    internal bool TryGetConnection(string id, out WebSocketConnectionContext? connection) => _connections.TryGetValue(id, out connection);
+    // internal bool TryGetConnection(string id, out WebSocketConnectionContext? connection) => _connections.TryGetValue(id, out connection);
+    // internal WebSocketConnectionContext CreateConnection() => CreateConnection(new());
 
-    internal WebSocketConnectionContext CreateConnection() => CreateConnection(new());
-
-    internal WebSocketConnectionContext CreateConnection(HttpConnectionDispatcherOptions options)
+    internal WebSocketConnectionContext CreateConnection(WebSocketConnectionDispatcherOptions options)
     {
         var id = MakeNewConnectionId();
 
         Log.CreatedNewConnection(_logger, id);
-        var transportPipeOptions = new PipeOptions(pauseWriterThreshold: options.TransportMaxBufferSize, resumeWriterThreshold: options.TransportMaxBufferSize / 2, readerScheduler: PipeScheduler.ThreadPool, useSynchronizationContext: false);
-        var appPipeOptions = new PipeOptions(pauseWriterThreshold: options.ApplicationMaxBufferSize, resumeWriterThreshold: options.ApplicationMaxBufferSize / 2, readerScheduler: PipeScheduler.ThreadPool, useSynchronizationContext: false);
-        var pair = DuplexPipe.CreateConnectionPair(transportPipeOptions, appPipeOptions);
+        var pair = DuplexPipe.CreateConnectionPair(options.TransportPipeOptions, options.AppPipeOptions);
         var connection = new WebSocketConnectionContext(id, _connectionLogger, pair.Application, pair.Transport, options);
 
         _connections.TryAdd(id, connection);
@@ -65,7 +61,7 @@ internal partial class WebSocketConnectionManager
         }
     }
 
-    public void RemoveConnection(string id)
+    private void RemoveConnection(string id)
     {
         if (_connections.TryRemove(id, out var _))
         {

@@ -5,20 +5,18 @@ using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Http.Connections.Features;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 using System.IO.Pipelines;
 using System.Security.Claims;
 
-namespace SimpleR;
+namespace SimpleR.Internal;
 
-public partial class WebSocketConnectionContext : ConnectionContext,
+internal partial class WebSocketConnectionContext : ConnectionContext,
     IConnectionIdFeature,
     IConnectionItemsFeature,
     IConnectionTransportFeature,
     IConnectionUserFeature,
     ITransferFormatFeature,
-    IHttpContextFeature,
     IHttpTransportFeature,
     IConnectionLifetimeFeature
 {
@@ -30,7 +28,7 @@ public partial class WebSocketConnectionContext : ConnectionContext,
     private readonly TaskCompletionSource _disposeTcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly CancellationTokenSource _connectionClosedTokenSource;
 
-    internal WebSocketConnectionContext(string id, ILogger logger, IDuplexPipe transport, IDuplexPipe application, HttpConnectionDispatcherOptions options)
+    internal WebSocketConnectionContext(string id, ILogger logger, IDuplexPipe transport, IDuplexPipe application, WebSocketConnectionDispatcherOptions options)
     {
         ConnectionId = id;
         Application = application;
@@ -39,26 +37,25 @@ public partial class WebSocketConnectionContext : ConnectionContext,
 
         // The default behavior is that both formats are supported.
         SupportedFormats = TransferFormat.Text | TransferFormat.Binary;
-        ActiveFormat = TransferFormat.Text;
+        ActiveFormat = options.WebSockets.TransferFormat == Protocol.TransferFormat.Binary? TransferFormat.Binary : TransferFormat.Text;
 
         _connectionClosedTokenSource = new CancellationTokenSource();
         ConnectionClosed = _connectionClosedTokenSource.Token;
 
-        _logger = logger ?? NullLogger.Instance;
-
+        _logger = logger;
+        
         Features = new FeatureCollection();
         Features.Set<IConnectionUserFeature>(this);
         Features.Set<IConnectionItemsFeature>(this);
         Features.Set<IConnectionIdFeature>(this);
         Features.Set<IConnectionTransportFeature>(this);
         Features.Set<ITransferFormatFeature>(this);
-        Features.Set<IHttpContextFeature>(this);
         Features.Set<IHttpTransportFeature>(this);
         Features.Set<IConnectionLifetimeFeature>(this);
     }
     public override string ConnectionId { get; set; }
     public IDuplexPipe Application { get; }
-    public HttpConnectionDispatcherOptions Options { get; }
+    public WebSocketConnectionDispatcherOptions Options { get; }
     public override IFeatureCollection Features { get; }
     internal Task? TransportTask { get; set; }
     internal Task? ApplicationTask { get; set; }
@@ -83,12 +80,9 @@ public partial class WebSocketConnectionContext : ConnectionContext,
     public ClaimsPrincipal? User { get; set; }
     public TransferFormat SupportedFormats { get; set; }
     public TransferFormat ActiveFormat { get; set; }
-    public HttpContext? HttpContext { get; set; }
-    public string? SubProtocol { get; internal set; }
     public HttpTransportType TransportType => HttpTransportType.WebSockets;
     public override IDuplexPipe Transport { get; set; }
     public CancellationTokenSource? Cancellation { get; set; }
-    internal bool IsEndOfMessage { get; set; }
 
     internal bool TryActivateConnection(
         ConnectionDelegate connectionDelegate,
