@@ -1,59 +1,103 @@
+using System.Buffers;
+using System.Diagnostics;
+using System.IO.Pipelines;
+using System.Net.WebSockets;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.Extensions.Logging;
-using System.IO.Pipelines;
-using System.Net.WebSockets;
 
-namespace SimpleR;
+namespace SimpleR.Internal;
 
-internal partial class WebSocketsServerTransport : IHttpTransport
+internal sealed partial class WebSocketsServerTransport : IHttpTransport
 {
     private readonly WebSocketOptions _options;
-    private readonly IDuplexPipe _application;
     private readonly ILogger _logger;
+    private readonly IDuplexPipe _application;
     private readonly WebSocketConnectionContext _connection;
     private volatile bool _aborted;
 
-    public WebSocketsServerTransport(WebSocketOptions options,
-        IDuplexPipe application,
-        WebSocketConnectionContext connection,
-        ILoggerFactory loggerFactory)
+    public WebSocketsServerTransport(WebSocketOptions options, IDuplexPipe application, WebSocketConnectionContext connection, ILoggerFactory loggerFactory)
     {
+        if (options == null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
+
+        if (application == null)
+        {
+            throw new ArgumentNullException(nameof(application));
+        }
+
+        if (loggerFactory == null)
+        {
+            throw new ArgumentNullException(nameof(loggerFactory));
+        }
+
         _options = options;
         _application = application;
         _connection = connection;
 
-        _logger = loggerFactory.CreateLogger<WebSocketsServerTransport>();
+        // We create the logger with a string to preserve the logging namespace after the server side transport renames.
+        _logger = loggerFactory.CreateLogger("Microsoft.AspNetCore.Http.Connections.Internal.Transports.WebSocketsTransport");
     }
 
     public async Task ProcessRequestAsync(HttpContext context, CancellationToken token)
     {
-        var subProtocol = _options.SubProtocolSelector?.Invoke(context.WebSockets.WebSocketRequestedProtocols);
+        Debug.Assert(context.WebSockets.IsWebSocketRequest, "Not a websocket request");
 
-        using var ws = await context.WebSockets.AcceptWebSocketAsync(subProtocol);
-        Log.SocketOpened(_logger, subProtocol);
+        var subProtocol = SelectSubProtocol(context);
+        if (context.RequestAborted.IsCancellationRequested)
+        {
+            return;
+        }
+        
+        using (var ws = await context.WebSockets.AcceptWebSocketAsync(subProtocol))
+        {
+            Log.SocketOpened(_logger, subProtocol);
 
-        try
-        {
-            await ProcessSocketAsync(ws);
+            try
+            {
+                await ProcessSocketAsync(ws);
+            }
+            finally
+            {
+                Log.SocketClosed(_logger);
+            }
         }
-        finally
+    }
+
+    private string? SelectSubProtocol(HttpContext context)
+    {
+        if (_options.SubProtocolSelector == null)
         {
-            Log.SocketClosed(_logger);
+            return null;
         }
+
+        var subProtocol = _options.SubProtocolSelector(context.WebSockets.WebSocketRequestedProtocols);
+        if (subProtocol == null)
+        {
+            // TODO: log
+            // TODO: maybe send response instead of aborting
+            context.Abort();
+        }
+
+        return subProtocol;
     }
 
     public async Task ProcessSocketAsync(WebSocket socket)
     {
-        var receiving = StartReceivingAsync(socket);
-        var sending = StartSendingAsync(socket);
+        // Begin sending and receiving. Receiving must be started first because ExecuteAsync enables SendAsync.
+        var receiving = StartReceiving(socket);
+        var sending = StartSending(socket);
 
         // Wait for send or receive to complete
         var trigger = await Task.WhenAny(receiving, sending);
 
         if (trigger == receiving)
         {
+            Log.WaitingForSend(_logger);
+
             // We're waiting for the application to finish and there are 2 things it could be doing
             // 1. Waiting for application data
             // 2. Waiting for a websocket send to complete
@@ -61,50 +105,57 @@ internal partial class WebSocketsServerTransport : IHttpTransport
             // Cancel the application so that ReadAsync yields
             _application.Input.CancelPendingRead();
 
-            using var delayCts = new CancellationTokenSource();
-            var resultTask = await Task.WhenAny(sending, Task.Delay(5000, delayCts.Token));
-
-            if (resultTask != sending)
+            using (var delayCts = new CancellationTokenSource())
             {
-                // We timed out so now we're in ungraceful shutdown mode
+                var resultTask = await Task.WhenAny(sending, Task.Delay(_options.CloseTimeout, delayCts.Token));
 
-                // Abort the websocket if we're stuck in a pending send to the client
-                _aborted = true;
+                if (resultTask != sending)
+                {
+                    // We timed out so now we're in ungraceful shutdown mode
+                    Log.CloseTimedOut(_logger);
 
-                socket.Abort();
-            }
-            else
-            {
-                delayCts.Cancel();
+                    // Abort the websocket if we're stuck in a pending send to the client
+                    _aborted = true;
+
+                    socket.Abort();
+                }
+                else
+                {
+                    delayCts.Cancel();
+                }
             }
         }
         else
         {
+            Log.WaitingForClose(_logger);
+
             // We're waiting on the websocket to close and there are 2 things it could be doing
             // 1. Waiting for websocket data
             // 2. Waiting on a flush to complete (backpressure being applied)
 
-            using var delayCts = new CancellationTokenSource();
-            var resultTask = await Task.WhenAny(receiving, Task.Delay(5000, delayCts.Token));
-
-            if (resultTask != receiving)
+            using (var delayCts = new CancellationTokenSource())
             {
-                // Abort the websocket if we're stuck in a pending receive from the client
-                _aborted = true;
+                var resultTask = await Task.WhenAny(receiving, Task.Delay(_options.CloseTimeout, delayCts.Token));
 
-                socket.Abort();
+                if (resultTask != receiving)
+                {
+                    // Abort the websocket if we're stuck in a pending receive from the client
+                    _aborted = true;
 
-                // Cancel any pending flush so that we can quit
-                _application.Output.CancelPendingFlush();
-            }
-            else
-            {
-                delayCts.Cancel();
+                    socket.Abort();
+
+                    // Cancel any pending flush so that we can quit
+                    _application.Output.CancelPendingFlush();
+                }
+                else
+                {
+                    delayCts.Cancel();
+                }
             }
         }
     }
 
-    private async Task StartReceivingAsync(WebSocket socket)
+    private async Task StartReceiving(WebSocket socket)
     {
         var token = _connection.Cancellation?.Token ?? default;
 
@@ -131,10 +182,9 @@ internal partial class WebSocketsServerTransport : IHttpTransport
                 }
 
                 Log.MessageReceived(_logger, receiveResult.MessageType, receiveResult.Count, receiveResult.EndOfMessage);
+                _options.EndOfMessageBytes.CopyTo(memory.Slice(receiveResult.Count));
+                _application.Output.Advance(receiveResult.Count + _options.EndOfMessageBytes.Length);
 
-                _application.Output.Advance(receiveResult.Count);
-
-                _connection.IsEndOfMessage = receiveResult.EndOfMessage;
                 var flushResult = await _application.Output.FlushAsync();
 
                 // We canceled in the middle of applying back pressure
@@ -168,7 +218,7 @@ internal partial class WebSocketsServerTransport : IHttpTransport
         }
     }
 
-    private async Task StartSendingAsync(WebSocket socket)
+    private async Task StartSending(WebSocket socket)
     {
         Exception? error = null;
 
@@ -178,7 +228,9 @@ internal partial class WebSocketsServerTransport : IHttpTransport
             {
                 var result = await _application.Input.ReadAsync();
                 var buffer = result.Buffer;
-
+                long advanceBytes = 0;
+                
+                // Get a frame from the application
                 try
                 {
                     if (result.IsCanceled)
@@ -190,15 +242,16 @@ internal partial class WebSocketsServerTransport : IHttpTransport
                     {
                         try
                         {
-                            Log.SendPayload(_logger, buffer.Length);
 
-                            var webSocketMessageType = _connection.ActiveFormat == TransferFormat.Binary
+                            var webSocketMessageType = (_connection.ActiveFormat == TransferFormat.Binary
                                 ? WebSocketMessageType.Binary
-                                : WebSocketMessageType.Text;
+                                : WebSocketMessageType.Text);
 
                             if (WebSocketCanSend(socket))
                             {
-                                await socket.SendAsync(buffer, webSocketMessageType /* TODO : Add cancel*/);
+                                advanceBytes = ParseEndOfMessage(ref buffer, out var sendBuffer, out var isEndOfMessage);
+                                Log.SendPayload(_logger, sendBuffer.Length);
+                                await socket.SendAsync(sendBuffer, webSocketMessageType, isEndOfMessage);
                             }
                             else
                             {
@@ -221,7 +274,7 @@ internal partial class WebSocketsServerTransport : IHttpTransport
                 }
                 finally
                 {
-                    _application.Input.AdvanceTo(buffer.End);
+                    _application.Input.AdvanceTo(buffer.GetPosition(advanceBytes), buffer.End);
                 }
             }
         }
@@ -249,11 +302,33 @@ internal partial class WebSocketsServerTransport : IHttpTransport
         }
     }
 
-    private static bool WebSocketCanSend(WebSocket ws)
+    private long ParseEndOfMessage(ref ReadOnlySequence<byte> buffer, out ReadOnlySequence<byte> sendBuffer, out bool isEndOfMessage)
     {
-        return ws.State is not (WebSocketState.Aborted or
-                WebSocketState.Closed or
-                WebSocketState.CloseSent);
+        if (_options.EndOfMessageBytes.Length == 0)
+        {
+            isEndOfMessage = false;
+            sendBuffer = buffer;
+            return buffer.Length;
+        }
+
+        var reader = new SequenceReader<byte>(buffer);
+        if (reader.TryReadTo(out ReadOnlySequence<byte> newBuffer, new ReadOnlySpan<byte>(_options.EndOfMessageBytes)))
+        {
+            var size = reader.Consumed;
+            sendBuffer = newBuffer;
+            isEndOfMessage = true;
+            return size;
+        }
+        
+        isEndOfMessage = false;
+        sendBuffer = ReadOnlySequence<byte>.Empty;
+        return 0;
     }
 
+    private static bool WebSocketCanSend(WebSocket ws)
+    {
+        return !(ws.State == WebSocketState.Aborted ||
+               ws.State == WebSocketState.Closed ||
+               ws.State == WebSocketState.CloseSent);
+    }
 }

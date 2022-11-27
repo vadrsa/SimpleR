@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using System.Net.WebSockets;
 
-namespace SimpleR;
+namespace SimpleR.Internal;
 
 internal sealed partial class WebSocketsServerTransport
 {

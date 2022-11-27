@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace SimpleR;
+namespace SimpleR.Internal;
 
 internal interface IHttpTransport
 {

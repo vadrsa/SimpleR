@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
-namespace SimpleR;
+namespace SimpleR.Internal;
 
 internal partial class WebSocketConnectionManager
 {
@@ -24,7 +24,7 @@ internal partial class WebSocketConnectionManager
 
     internal WebSocketConnectionContext CreateConnection() => CreateConnection(new());
 
-    internal WebSocketConnectionContext CreateConnection(HttpConnectionDispatcherOptions options)
+    internal WebSocketConnectionContext CreateConnection(WebSocketConnectionDispatcherOptions options)
     {
         var id = MakeNewConnectionId();
 

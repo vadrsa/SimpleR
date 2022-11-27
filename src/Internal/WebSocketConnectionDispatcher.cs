@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.Extensions.Logging;
 
-namespace SimpleR;
+namespace SimpleR.Internal;
 
 internal class WebSocketConnectionDispatcher
 {
@@ -16,11 +16,9 @@ internal class WebSocketConnectionDispatcher
     private WebSocketConnectionManager ConnectionManager { get; }
     private ILoggerFactory LoggerFactory { get; }
 
-    public async Task ExecuteAsync(HttpContext httpContext, HttpConnectionDispatcherOptions options, ConnectionDelegate connectionDelegate)
+    public async Task ExecuteAsync(HttpContext httpContext, WebSocketConnectionDispatcherOptions options, ConnectionDelegate connectionDelegate)
     {
         var connection = ConnectionManager.CreateConnection(options);
-        connection.HttpContext = httpContext;
-        connection.Cancellation = new CancellationTokenSource();
 
         var transport = new WebSocketsServerTransport(options.WebSockets, connection.Application, connection, LoggerFactory);
 

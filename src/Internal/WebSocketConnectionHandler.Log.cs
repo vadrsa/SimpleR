@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Logging;
 
-namespace SimpleR;
+namespace SimpleR.Internal;
 
-internal partial class WebSocketConnectionHandler<THandler> : ConnectionHandler
-    where THandler : WebsocketHandler
+internal partial class WebSocketConnectionHandler<THandler, TMessage>
+    where THandler : IWebSocketMessageDispatcher<TMessage>
 {
     private static partial class Log
     {
