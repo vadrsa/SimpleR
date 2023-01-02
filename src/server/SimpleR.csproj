@@ -4,6 +4,15 @@
     <TargetFramework>net6.0</TargetFramework>
 	<Nullable>enable</Nullable>
 	<ImplicitUsings>enable</ImplicitUsings>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageVersion>0.1.0</PackageVersion>
+	<Title>SimpleR.Server</Title>
+	<Authors>Davit Asryan</Authors>
+	<Description>A simple and fast pure websocket server for ASP.NET Core</Description>
+	<PackageProjectUrl>https://github.com/vadrsa/SimpleR</PackageProjectUrl>
+	<PackageIcon>NET.png</PackageIcon>
+	<RepositoryUrl>https://github.com/vadrsa/SimpleR</RepositoryUrl>
+	<PackageId>SimpleR.Server</PackageId>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -11,6 +20,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\protocol\SimpleR.Protocol\SimpleR.Protocol.csproj" />
+	  <PackageReference Include="SimpleR.Protocol" Version="0.1.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\misc\NET.png">
+	    <Pack>True</Pack>
+	    <PackagePath></PackagePath>
+	    <Link>NET.png</Link>
+	  </None>
 	</ItemGroup>
 </Project>
