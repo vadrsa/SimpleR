@@ -1,0 +1,26 @@
+<Project>
+  <Import Project=".\Common.props" />
+
+  <PropertyGroup Label="PackageProperties">
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/vadrsa/simpler</RepositoryUrl>
+    <!-- <PackageIcon>TBD</PackageIcon> -->
+    <Authors>vadrsa</Authors>
+    <Copyright>Copyright 2023 Davit Asryan</Copyright>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageLicenseExpression>AML</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackagePrimaryLicenseFile>$(RepoRoot)\LICENSE.TXT</PackagePrimaryLicenseFile>
+  </PropertyGroup>
+
+  <PropertyGroup Label="SourceLinkProperties">
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MinVer" PrivateAssets="All" Condition="'$(IntegrationBuild)' != 'true'" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" Condition="'$(IntegrationBuild)' != 'true'" />
+    <!-- <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" /> -->
+  </ItemGroup>
+</Project>
