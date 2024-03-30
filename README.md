@@ -1,10 +1,11 @@
 # SimpleR
-SimpleR is a stripped down version of SignalR, after removing all the custom protocols from SignalR we are left with a SimpleR library.
+SimpleR is a streamlined version of [SignalR](https://github.com/dotnet/aspnetcore/blob/main/src/SignalR/README.md), a high-performance, opinionated, real-time web framework. By removing all the custom protocols from SignalR, we are left with a simpler library, hence the name SimpleR.
 
 # Why SimpleR?
-SimpleR was created to solve the problem of easily cerating high performing WebSocket server on .NET in cases when the client cannot use SignalR. For example, when the client is an IoT device working with some protocol standard, you don't have control over the protocolo thus can't use SignalR. In those cases you are left with very low level programming API's. SimpleR solves that problem for you by giving you much simpler and familiar API's to work with to bootstrap your high performance WebSocket server development.
+SimpleR was created to address the need for an easy-to-use, high-performance WebSocket server on .NET, particularly in scenarios where the client cannot use SignalR. For instance, when the client is an IoT device operating with a specific protocol standard over which you have no control(OCPP for example), SignalR may not be an option. In such cases, you're often left with very low-level programming APIs. SimpleR aims to solve this problem by providing simpler and more familiar APIs to expedite your high-performance WebSocket server development.
+In SimpleR terms, if you can use SignalR you should, if not go with SimpleR.
 
-# How it works
+# Getting Started
 Since SimpleR is protocol-agnostic, it requires the user to provide a protocol definition to be able to construct a message from the stream of bytes each connection receives. This protocol definition is provided by implementing the `IMessageProtocol<TMessage>` interface.
 There are two important categories of protocols, the first category can parse messages from just the raw bytes received by the websocket connection, the second category can only parse byes that are delimited by the [EndOfMessage flag of WebsocketReceiveResult](https://learn.microsoft.com/en-Us/dotnet/api/system.net.websockets.websocketreceiveresult).
 ## Raw Protocols
