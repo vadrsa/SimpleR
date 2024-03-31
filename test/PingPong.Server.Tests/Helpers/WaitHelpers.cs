@@ -9,6 +9,7 @@ public static class WaitHelpers
         var sw = Stopwatch.StartNew();
         while (!condition() && sw.ElapsedMilliseconds < timeoutMs)
         {
+            
             await Task.Delay(100);
         }
     }
