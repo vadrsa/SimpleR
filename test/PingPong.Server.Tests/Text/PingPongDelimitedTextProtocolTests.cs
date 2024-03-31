@@ -94,6 +94,7 @@ public class PingPongDelimitedTextProtocolTests : IClassFixture<WebApplicationFa
         using var client3 = (await _factory.Server.ConnectWebsocketAsync(_route)).client;
         client1.Dispose();
         client2.Dispose();
+        await WaitHelpers.WaitFor(() => connectionManager.Connections.Count != initialConnections);
         await WaitHelpers.WaitFor(() => connectionManager.Disconnections.Count != initialDisconnections);
         connectionManager.Connections.Count.Should().Be(initialConnections + 3);
         connectionManager.Disconnections.Count.Should().Be(initialDisconnections + 2);
