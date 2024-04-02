@@ -38,6 +38,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingPong.Server", "test\Pin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{813E378E-1E13-4C9E-BBDC-244A6749AB86}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{4BEDDC2A-CC7B-4650-BC97-AF81DE36D351}"
+	ProjectSection(SolutionItems) = preProject
+		examples\Directory.Build.props = examples\Directory.Build.props
+		examples\Directory.Packages.props = examples\Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleThermostat.Server", "examples\SimpleThermostat.Server\SimpleThermostat.Server.csproj", "{33E383E6-0383-4CE0-93D7-1A513A38356F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleThermostat.Protocol", "examples\SimpleThermostat.Protocol\SimpleThermostat.Protocol.csproj", "{0CE41E4C-7C34-4B25-8135-C6EF9FF01DF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleThermostat.Client", "examples\SimpleThermostat.Client\SimpleThermostat.Client.csproj", "{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +88,24 @@ Global
 		{588BD3C2-2835-4208-8469-C0652228279D}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
 		{588BD3C2-2835-4208-8469-C0652228279D}.Publish|Any CPU.Build.0 = Publish|Any CPU
 		{813E378E-1E13-4C9E-BBDC-244A6749AB86}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{33E383E6-0383-4CE0-93D7-1A513A38356F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33E383E6-0383-4CE0-93D7-1A513A38356F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33E383E6-0383-4CE0-93D7-1A513A38356F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33E383E6-0383-4CE0-93D7-1A513A38356F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33E383E6-0383-4CE0-93D7-1A513A38356F}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
+		{33E383E6-0383-4CE0-93D7-1A513A38356F}.Publish|Any CPU.Build.0 = Debug|Any CPU
+		{0CE41E4C-7C34-4B25-8135-C6EF9FF01DF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CE41E4C-7C34-4B25-8135-C6EF9FF01DF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CE41E4C-7C34-4B25-8135-C6EF9FF01DF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CE41E4C-7C34-4B25-8135-C6EF9FF01DF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CE41E4C-7C34-4B25-8135-C6EF9FF01DF2}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CE41E4C-7C34-4B25-8135-C6EF9FF01DF2}.Publish|Any CPU.Build.0 = Debug|Any CPU
+		{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3}.Publish|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,5 +119,8 @@ Global
 		{D5F7A5F2-F59A-4221-8E53-C4DBCAD5107E} = {D1E4601A-E2A0-43AC-8D33-B05D0001C88F}
 		{F8A42439-AA4C-4F97-9EB8-68AB761ED725} = {D1E4601A-E2A0-43AC-8D33-B05D0001C88F}
 		{588BD3C2-2835-4208-8469-C0652228279D} = {D1E4601A-E2A0-43AC-8D33-B05D0001C88F}
+		{33E383E6-0383-4CE0-93D7-1A513A38356F} = {4BEDDC2A-CC7B-4650-BC97-AF81DE36D351}
+		{0CE41E4C-7C34-4B25-8135-C6EF9FF01DF2} = {4BEDDC2A-CC7B-4650-BC97-AF81DE36D351}
+		{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3} = {4BEDDC2A-CC7B-4650-BC97-AF81DE36D351}
 	EndGlobalSection
 EndGlobal
