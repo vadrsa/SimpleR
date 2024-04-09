@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.AspNetCore.Builder;
 
-public static class HubEndpointRouteBuilderExtensions
+public static class SimpleREndpointRouteBuilderExtensions
 {
     /// <summary>
     /// Maps incoming requests with the specified path to the specified handler

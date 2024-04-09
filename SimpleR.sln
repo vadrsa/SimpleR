@@ -50,6 +50,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleThermostat.Protocol",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleThermostat.Client", "examples\SimpleThermostat.Client\SimpleThermostat.Client.csproj", "{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleR.Ocpp.Tests", "test\SimpleR.Ocpp.Tests\SimpleR.Ocpp.Tests.csproj", "{53FCFE84-1E7C-4ECF-ABEC-7D76459FC3BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleR.Ocpp.Benchmarks", "test\SimpleR.Ocpp.Benchmarks\SimpleR.Ocpp.Benchmarks.csproj", "{8CA715D9-6491-42C2-878D-6FBDA9D9B87C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleOcpp.Server", "examples\SimpleOcpp.Server\SimpleOcpp.Server.csproj", "{1EFE8056-F4BD-4ED0-B7AB-5B61BFE35C29}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ext", "ext", "{813A63E0-FB31-48A3-AC0D-D4F3C469706A}"
+	ProjectSection(SolutionItems) = preProject
+		ext\Directory.Packages.props = ext\Directory.Packages.props
+		ext\Directory.Build.props = ext\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleR.Ocpp", "ext\SimpleR.Ocpp\SimpleR.Ocpp.csproj", "{531643BE-44A4-404B-A3BB-6C44BC7C49D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -106,6 +120,30 @@ Global
 		{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
 		{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3}.Publish|Any CPU.Build.0 = Debug|Any CPU
+		{53FCFE84-1E7C-4ECF-ABEC-7D76459FC3BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53FCFE84-1E7C-4ECF-ABEC-7D76459FC3BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53FCFE84-1E7C-4ECF-ABEC-7D76459FC3BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53FCFE84-1E7C-4ECF-ABEC-7D76459FC3BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53FCFE84-1E7C-4ECF-ABEC-7D76459FC3BB}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
+		{53FCFE84-1E7C-4ECF-ABEC-7D76459FC3BB}.Publish|Any CPU.Build.0 = Debug|Any CPU
+		{8CA715D9-6491-42C2-878D-6FBDA9D9B87C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CA715D9-6491-42C2-878D-6FBDA9D9B87C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CA715D9-6491-42C2-878D-6FBDA9D9B87C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CA715D9-6491-42C2-878D-6FBDA9D9B87C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CA715D9-6491-42C2-878D-6FBDA9D9B87C}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CA715D9-6491-42C2-878D-6FBDA9D9B87C}.Publish|Any CPU.Build.0 = Debug|Any CPU
+		{1EFE8056-F4BD-4ED0-B7AB-5B61BFE35C29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EFE8056-F4BD-4ED0-B7AB-5B61BFE35C29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EFE8056-F4BD-4ED0-B7AB-5B61BFE35C29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EFE8056-F4BD-4ED0-B7AB-5B61BFE35C29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EFE8056-F4BD-4ED0-B7AB-5B61BFE35C29}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EFE8056-F4BD-4ED0-B7AB-5B61BFE35C29}.Publish|Any CPU.Build.0 = Debug|Any CPU
+		{531643BE-44A4-404B-A3BB-6C44BC7C49D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{531643BE-44A4-404B-A3BB-6C44BC7C49D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{531643BE-44A4-404B-A3BB-6C44BC7C49D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{531643BE-44A4-404B-A3BB-6C44BC7C49D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{531643BE-44A4-404B-A3BB-6C44BC7C49D9}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
+		{531643BE-44A4-404B-A3BB-6C44BC7C49D9}.Publish|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,5 +160,9 @@ Global
 		{33E383E6-0383-4CE0-93D7-1A513A38356F} = {4BEDDC2A-CC7B-4650-BC97-AF81DE36D351}
 		{0CE41E4C-7C34-4B25-8135-C6EF9FF01DF2} = {4BEDDC2A-CC7B-4650-BC97-AF81DE36D351}
 		{F9910C92-BEBB-416F-9CBB-78EFD6B2F5F3} = {4BEDDC2A-CC7B-4650-BC97-AF81DE36D351}
+		{53FCFE84-1E7C-4ECF-ABEC-7D76459FC3BB} = {D1E4601A-E2A0-43AC-8D33-B05D0001C88F}
+		{8CA715D9-6491-42C2-878D-6FBDA9D9B87C} = {D1E4601A-E2A0-43AC-8D33-B05D0001C88F}
+		{1EFE8056-F4BD-4ED0-B7AB-5B61BFE35C29} = {4BEDDC2A-CC7B-4650-BC97-AF81DE36D351}
+		{531643BE-44A4-404B-A3BB-6C44BC7C49D9} = {813A63E0-FB31-48A3-AC0D-D4F3C469706A}
 	EndGlobalSection
 EndGlobal

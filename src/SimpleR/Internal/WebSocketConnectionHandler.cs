@@ -1,3 +1,4 @@
+using System.Buffers;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Logging;
 using SimpleR.Protocol;
@@ -103,9 +104,16 @@ internal partial class WebSocketConnectionHandler<TMessageIn, TMessageOut> : Con
                     break;
                 }
 
-                while (!buffer.IsEmpty && _messageProtocol.TryParseMessage(ref buffer, out var message))
+                while (!buffer.IsEmpty && TryParseMessageImpl(ref buffer, out var message, out var exception))
                 {
-                    await _dispatcher.DispatchMessageAsync(connection, message);
+                    if (exception == null)
+                    {
+                        await _dispatcher.DispatchMessageAsync(connection, message);
+                    }
+                    else
+                    {
+                        await _dispatcher.OnParsingIssueAsync(connection, exception);
+                    }
                 }
 
                 if (result.IsCompleted)
@@ -124,6 +132,22 @@ internal partial class WebSocketConnectionHandler<TMessageIn, TMessageOut> : Con
                 // before yielding the read again.
                 input.AdvanceTo(buffer.Start, buffer.End);
             }
+        }
+    }
+
+    private bool TryParseMessageImpl(ref ReadOnlySequence<byte> buffer, out TMessageIn message, out Exception? exception)
+    {
+        try
+        {
+            var result =  _messageProtocol.TryParseMessage(ref buffer, out message);
+            exception = null;
+            return result;
+        }
+        catch (Exception ex)
+        {
+            exception = ex;
+            message = default!;
+            return true;
         }
     }
 }

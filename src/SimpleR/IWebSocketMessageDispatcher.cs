@@ -26,6 +26,17 @@ public interface IWebSocketMessageDispatcher<in TMessageIn, out TMessageOut>
     /// <param name="connection">The connection.</param>
     /// <param name="message">The message to dispatch.</param>
     Task DispatchMessageAsync(IWebsocketConnectionContext<TMessageOut> connection, TMessageIn message);
+
+
+    /// <summary>
+    /// Handle errors that happened while parsing messages
+    /// </summary>
+    /// <param name="connection">The connection.</param>
+    /// <param name="exception">The exception that occurred.</param>
+    Task OnParsingIssueAsync(IWebsocketConnectionContext<TMessageOut> connection, Exception exception) =>
+        Task.CompletedTask;
+
+
 }
 
 /// <summary>
