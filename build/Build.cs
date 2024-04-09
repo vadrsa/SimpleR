@@ -64,10 +64,7 @@ class Build : NukeBuild
     readonly AbsolutePath TestResultDirectory = RootDirectory / ".nuke/Artifacts/Test-Results/";
     
     [Parameter]
-    readonly AbsolutePath ArtifactsDirectory = RootDirectory + ".nuke/Artifacts/";
-    
-    [Parameter]
-    readonly AbsolutePath NugetDirectory = RootDirectory + ".nuke/Artifacts/nuget/";
+    readonly AbsolutePath NugetDirectory = RootDirectory + "/.nuke/Artifacts/nuget/";
     
     [MinVer]
     readonly MinVer MinVer;
@@ -189,7 +186,7 @@ class Build : NukeBuild
             DotNetTasks.DotNetPack(s =>
             {
                 var proj = Solution.AllProjects.FirstOrDefault(x => x.Name == "SimpleR.Ocpp") ??
-                           throw new NullReferenceException("Failed to find SimpleR.Protocol project");
+                           throw new NullReferenceException("Failed to find SimpleR.Ocpp project");
                 return s
                     .SetProject(proj)
                     .SetConfiguration(Configuration.Publish)
