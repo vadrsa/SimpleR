@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using PingPong.Server.Binary;
 using PingPong.Server.NoOp;
+using PingPong.Server.NoOpAuth;
 using PingPong.Server.Text;
 using SimpleR.Protocol;
 
@@ -21,13 +20,21 @@ public class Program
 
         app.MapGet("/", () => "Hello World!");
 
-        app.MapSimpleR<EmptyMessage>("/noop",
+        app.MapSimpleR<NoOp.EmptyMessage>("/noop",
             b =>
             {
                 b.UseEndOfMessageDelimitedProtocol(new NoOpMessageProtocol())
                     .UseDispatcher<NoOpMessageDispatcher>();
             }
         );
+        
+        app.MapSimpleR<NoOpAuth.EmptyMessage>("/noop/auth",
+            b =>
+            {
+                b.UseEndOfMessageDelimitedProtocol(new NoOpAuthMessageProtocol())
+                    .UseDispatcher<NoOpAuthMessageDispatcher>();
+            }
+        ).RequireAuthorization();
         
         app.MapSimpleR<PingPongBinary>("/ping/binary/custom",
             b =>

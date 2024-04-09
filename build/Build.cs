@@ -39,6 +39,13 @@ using static Nuke.Common.IO.PathConstruction;
     FetchDepth = 0,
     InvokedTargets = [nameof(PublishCorePackage)],
     ImportSecrets = [nameof(NugetApiKey)])]
+[GitHubActions(
+    "PackOcpp",
+    GitHubActionsImage.UbuntuLatest,
+    On = [GitHubActionsTrigger.WorkflowDispatch],
+    FetchDepth = 0,
+    InvokedTargets = [nameof(PackOcpp)],
+    ImportSecrets = [nameof(NugetApiKey)])]
 class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -167,6 +174,22 @@ class Build : NukeBuild
             {
                 var proj = Solution.AllProjects.FirstOrDefault(x => x.Name == "SimpleR.Protocol") ??
                                      throw new NullReferenceException("Failed to find SimpleR.Protocol project");
+                return s
+                    .SetProject(proj)
+                    .SetConfiguration(Configuration.Publish)
+                    .SetVersion(MinVer.Version)
+                    .SetOutputDirectory(NugetDirectory);
+            });
+        });
+    
+    Target PackOcpp => _ => _
+        .DependsOn(RunUnitTests)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNetPack(s =>
+            {
+                var proj = Solution.AllProjects.FirstOrDefault(x => x.Name == "SimpleR.Ocpp") ??
+                           throw new NullReferenceException("Failed to find SimpleR.Protocol project");
                 return s
                     .SetProject(proj)
                     .SetConfiguration(Configuration.Publish)

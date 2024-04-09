@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="SimpleR.Server" />
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
 </Project>

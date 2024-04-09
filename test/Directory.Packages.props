@@ -1,6 +1,7 @@
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Packages.props, $(MSBuildThisFileDirectory)..))" />
   <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.13.12" />
     <PackageVersion Include="System.IO.Pipelines" Version="[6.0.0,)" />
     <PackageVersion Include="Websocket.Client" Version="5.1.1" />
   </ItemGroup>

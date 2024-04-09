@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.ComponentModel.Annotations" />
+      <PackageReference Include="System.Text.Json" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' != 'Publish'">
+        <ProjectReference Include="$(RepoRoot)\src\SimpleR.Protocol\SimpleR.Protocol.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\SimpleR\SimpleR.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Publish'">
+        <PackageReference Include="SimpleR.Protocol" />
+        <PackageReference Include="SimpleR" />
+    </ItemGroup>
+</Project>
