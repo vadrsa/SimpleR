@@ -18,6 +18,6 @@
 
     <ItemGroup Condition="'$(Configuration)' == 'Publish'">
         <PackageReference Include="SimpleR.Protocol" />
-        <PackageReference Include="SimpleR" />
+        <PackageReference Include="SimpleR.Server" />
     </ItemGroup>
 </Project>
