@@ -2,7 +2,7 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Packages.props, $(MSBuildThisFileDirectory)..))" />
   <ItemGroup>
     <PackageVersion Include="SimpleR.Protocol" Version="$(CoreLatestVersion)" />
-    <PackageVersion Include="SimpleR" Version="$(CoreLatestVersion)" />
+    <PackageVersion Include="SimpleR.Server" Version="$(CoreLatestVersion)" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="[5.0.0,)" />
     <PackageVersion Include="System.Text.Json" Version="[6.0.0,)" />
   </ItemGroup>

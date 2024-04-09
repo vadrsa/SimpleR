@@ -1,8 +1,8 @@
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Packages.props, $(MSBuildThisFileDirectory)..))" />
   <ItemGroup>
-    <PackageVersion Include="SimpleR.Protocol" Version="1.0.0-alpha.1" />
-    <PackageVersion Include="SimpleR.Server" Version="1.0.0-alpha.1" />
+    <PackageVersion Include="SimpleR.Protocol" Version="$(CoreLatestVersion)" />
+    <PackageVersion Include="SimpleR.Server" Version="$(CoreLatestVersion)" />
     <PackageVersion Include="System.Text.Json" Version="8.0.3" />
     <PackageVersion Include="Websocket.Client" Version="5.1.1" />
   </ItemGroup>
