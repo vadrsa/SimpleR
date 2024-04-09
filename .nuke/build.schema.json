@@ -93,6 +93,7 @@
               "PackProtocol",
               "Print",
               "PublishCorePackage",
+              "PublishOcppPackage",
               "PublishProtocolPackage",
               "Restore",
               "RunUnitTests"
@@ -116,6 +117,7 @@
               "PackProtocol",
               "Print",
               "PublishCorePackage",
+              "PublishOcppPackage",
               "PublishProtocolPackage",
               "Restore",
               "RunUnitTests"

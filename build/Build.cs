@@ -40,11 +40,11 @@ using static Nuke.Common.IO.PathConstruction;
     InvokedTargets = [nameof(PublishCorePackage)],
     ImportSecrets = [nameof(NugetApiKey)])]
 [GitHubActions(
-    "PackOcpp",
+    "PublishOcppPackage",
     GitHubActionsImage.UbuntuLatest,
     On = [GitHubActionsTrigger.WorkflowDispatch],
     FetchDepth = 0,
-    InvokedTargets = [nameof(PackOcpp)],
+    InvokedTargets = [nameof(PublishOcppPackage)],
     ImportSecrets = [nameof(NugetApiKey)])]
 class Build : NukeBuild
 {
@@ -219,6 +219,23 @@ class Build : NukeBuild
     
     Target PublishCorePackage => _ => _
         .DependsOn(PackCore)
+        .Requires(() => NugetApiUrl)
+        .Requires(() => NugetApiKey)
+        .Executes(() =>
+        {
+            NugetDirectory.GlobFiles("*.nupkg")
+                .Where(x => !x.Name.EndsWith("symbols.nupkg"))
+                .ForEach(x =>
+                {
+                    DotNetTasks.DotNetNuGetPush(s => s
+                        .SetTargetPath(x)
+                        .SetSource(NugetApiUrl)
+                        .SetApiKey(NugetApiKey)
+                    );
+                });
+        });
+    Target PublishOcppPackage => _ => _
+        .DependsOn(PackOcpp)
         .Requires(() => NugetApiUrl)
         .Requires(() => NugetApiKey)
         .Executes(() =>
