@@ -37,11 +37,11 @@ app.MapPost("/thermostat/{deviceId}/turnOff", async (string deviceId, Thermostat
 });
 
 app.MapSimpleR<ThermostatMetric, ThermostatCommand>("thermostat/{deviceId}/socket", b =>
-{
-    b.UseDispatcher<ThermostatMessageDispatcher>()
-        .UseEndOfMessageDelimitedProtocol(
-            MessageProtocol.From(new ThermostatMessageReader(), new ThermostatMessageWriter()));
-})
-.RequireAuthorization();
+    {
+        b.UseDispatcher<ThermostatMessageDispatcher>()
+            .UseEndOfMessageDelimitedProtocol(
+                MessageProtocol.From(new ThermostatMessageReader(), new ThermostatMessageWriter()));
+    })
+    .RequireAuthorization();
 
 app.Run();

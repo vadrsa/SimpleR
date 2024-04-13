@@ -13,7 +13,19 @@ In short, If you can use SignalR, you should. If not, go with SimpleR.
 
 SimpleR was created to address the need for an easy-to-use, high-performance WebSocket server on .NET, particularly in scenarios where the client cannot use SignalR. For instance, when the client is an IoT device operating with a specific protocol standard over which you have no control ([OCPP](https://openchargealliance.org) for example), SignalR may not be an option. In such cases, you're often left with very low-level programming APIs. SimpleR aims to solve this problem by providing simpler and more familiar APIs to expedite your high-performance WebSocket server development.
 
+# Standard Protocols
+- OCPP [![NuGet Version](https://img.shields.io/nuget/v/SimpleR.Ocpp)](https://www.nuget.org/packages/SimpleR.Ocpp)
+
+# Examples
+Examples can be found [here](https://github.com/vadrsa/SimpleR/tree/master/examples)
+
 # Getting Started
+SimpleR can be installed using the Nuget package manager or the `dotnet` CLI.
+
+```
+dotnet add package SimpleR.Server --prerelease
+```
+
 ## Configure SimpleR
 Here is a simple configuration example.
 ```cs
@@ -25,13 +37,12 @@ var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
 
-app.MapSimpleR<ChatMessage>("/chat",
-    b =>
-    {
-        b.UseEndOfMessageDelimitedProtocol(new ChatMessageProtocol())
-        .UseDispatcher<ChatMessageDispatcher>();
-    }
-);
+app.MapSimpleR<ThermostatMetric, ThermostatCommand>("thermostat/{deviceId}", b =>
+{
+    b.UseDispatcher<ThermostatMessageDispatcher>()
+        .UseEndOfMessageDelimitedProtocol(new ThermostatMessageProtocol());
+})
+.RequireAuthorization();
 
 app.Run();
 ```
@@ -39,16 +50,15 @@ The preceding code adds SimpleR to the ASP.NET Core dependency injections, routi
 ## Create a Message Dispatcher
 A message dispatcher is a high-level pipeline that encapsulates the logic of where to dispatch connection messages.
 ```cs
-public class ChatMessageDispatcher : IWebSocketMessageDispatcher<ChatMessage>
+public class ThermostatMessageDispatcher : IWebSocketMessageDispatcher<ThermostatMetric, ThermostatCommand>
 {
-
+    
     /// <summary>
     /// Called when a connection is established.
     /// </summary>
     /// <param name="connection">The connection.</param>
-    public Task OnConnectedAsync(IWebsocketConnectionContext<ChatMessage> connection)
+    public Task OnConnectedAsync(IWebsocketConnectionContext<ThermostatCommand> connection)
     {
-        // handle connection
         return Task.CompletedTask;
     }
 
@@ -57,9 +67,8 @@ public class ChatMessageDispatcher : IWebSocketMessageDispatcher<ChatMessage>
     /// </summary>
     /// <param name="connection">The connection.</param>
     /// <param name="exception">The exception that occurred, if any.</param>
-    public Task OnDisconnectedAsync(IWebsocketConnectionContext<ChatMessage> connection, Exception? exception)
+    public Task OnDisconnectedAsync(IWebsocketConnectionContext<ThermostatCommand> connection, Exception? exception)
     {
-        // handle disconnection
         return Task.CompletedTask;
     }
 
@@ -68,10 +77,28 @@ public class ChatMessageDispatcher : IWebSocketMessageDispatcher<ChatMessage>
     /// </summary>
     /// <param name="connection">The connection.</param>
     /// <param name="message">The message to dispatch.</param>
-    public Task DispatchMessageAsync(IWebsocketConnectionContext<ChatMessage> connection, ChatMessage message)
+    public async Task DispatchMessageAsync(IWebsocketConnectionContext<ThermostatCommand> connection, ThermostatMetric message)
     {
-        // dispatch message
-        return Task.CompletedTask;
+        var deviceId = connection.User.FindFirstValue(ClaimTypes.Name) ?? throw new InvalidOperationException("Current user is not a device");
+        var settings = GetSettings(deviceId);
+        if(message is ThermostatTemperatureMetric temperatureMetric)
+        {
+            if (temperatureMetric.Temperature < settings.TargetTemperature)
+            {
+                // If the temperature is below the target temperature, set the thermostat to heat mode
+                await connection.WriteAsync(new SetThermostatModeCommand(ThermostatMode.Heat));
+            }
+            else if (temperatureMetric.Temperature > settings.TargetTemperature)
+            {
+                // If the temperature is above the target temperature, set the thermostat to cool mode
+                await connection.WriteAsync(new SetThermostatModeCommand(ThermostatMode.Cool));
+            }
+            else
+            {
+                // If the temperature is at the target temperature, turn off the thermostat
+                await connection.WriteAsync(new SetThermostatModeCommand(ThermostatMode.Off));
+            }
+        }
     }
 }
 ```
@@ -84,32 +111,29 @@ There are two categories of a message protocol:
 ### EndOfMessage Delimited Protocol
 Here is a simple delimited protocol implementation:
 ```cs
-public class ChatMessageProtocol : IDelimitedMessageProtocol<ChatMessage>
+public class ThermostatMessageProtocol: IDelimitedMessageProtocol<ThermostatMetric, ThermostatCommand>
 {
-    public ChatMessage ParseMessage(ref ReadOnlySequence<byte> span)
+    public ThermostatMetric ParseMessage(ref ReadOnlySequence<byte> input)
     {
-        return new ChatMessage { Content = Encoding.UTF8.GetString(span) };
+        var jsonReader = new Utf8JsonReader(input);
+
+        return JsonSerializer.Deserialize<ThermostatMetric>(ref jsonReader)!;
     }
-
-    public void WriteMessage(ChatMessage message, IBufferWriter<byte> output)
+    
+    public void WriteMessage(ThermostatCommand message, IBufferWriter<byte> output)
     {
-        var span = output.GetSpan(Encoding.UTF8.GetByteCount(message.Content));
-
-        var bytesWritten = Encoding.UTF8.GetBytes(message.Content, span);
-
-        output.Advance(bytesWritten);
+        var jsonWriter = new Utf8JsonWriter(output);
+        JsonSerializer.Serialize(jsonWriter, message);
     }
 }
 ```
 To use the delimited protocol call the `UseEndOfMessageDelimitedProtocol` method of the builder.
 ```cs
-app.MapSimpleR<ChatMessage>("/chat",
-    b =>
-    {
-        b.UseEndOfMessageDelimitedProtocol(new ChatMessageProtocol())
-        .UseDispatcher<ChatMessageDispatcher>();
-    }
-);
+app.MapSimpleR<ThermostatMetric, ThermostatCommand>("thermostat/{deviceId}", b =>
+{
+    b.UseDispatcher<ThermostatMessageDispatcher>()
+        .UseEndOfMessageDelimitedProtocol(new ThermostatMessageProtocol());
+})
 ```
 ### Custom Protocol
 Here is a simple custom protocol implementation:
