@@ -22,6 +22,9 @@ app.MapSimpleRToOcpp("/ocpp/{chargePointId}/", b =>
 {
     b.UseOcppProtocol()
         .UseDispatcher<SimpleOcppDispatcher>();
+}, o =>
+{
+    o.WebSockets.SubProtocolSelector = OcppProtocolSelector.Create("ocpp1.6");
 })
 .RequireAuthorization("ChargerPolicy");
 
