@@ -47,9 +47,13 @@ namespace SimpleR.Protocol.Internal
         /// <param name="count">The number of bytes written</param>
         private void FinishFrame(int count)
         {
+            // nothing written
             if (!_lengthSlice.HasValue)
             {
-                // nothing written;
+                if (count == 0)
+                {
+                    FinishEmptyFrame();
+                }
                 return;
             }
 
@@ -57,6 +61,16 @@ namespace SimpleR.Protocol.Internal
 
             BinaryPrimitives.WriteInt32BigEndian(_lengthSlice.Value.Span, count);
             _internalWriter.Advance(count + FrameHelpers.IntegerLengthEncodedByteCount + advance);
+            _lastEndOfMessageSlice = _internalWriter.GetMemory(1);
+        }
+        
+        private void FinishEmptyFrame()
+        {
+            var advance = FinishLastFrameInternal(false);
+            // write length
+            var slice = _internalWriter.GetSpan(FrameHelpers.IntegerLengthEncodedByteCount);
+            BinaryPrimitives.WriteInt32BigEndian(slice, 0);
+            _internalWriter.Advance(FrameHelpers.IntegerLengthEncodedByteCount + advance);
             _lastEndOfMessageSlice = _internalWriter.GetMemory(1);
         }
 
@@ -130,10 +144,12 @@ namespace SimpleR.Protocol.Internal
         /// <returns>A tuple containing the buffer and the starting index</returns>
         private (Memory<byte> buffer, int startFrom) GetBuffer(int sizeHint = 0)
         {
+            if (!_firstBufferRequest)
+                throw new NotSupportedException("Multiple buffer requests per frame is not supported");
+            
             sizeHint = AdjustSizeHint(sizeHint);
             var realBuffer = _internalWriter.GetMemory(sizeHint);
 
-            if (!_firstBufferRequest) return (realBuffer[..1], 0);
             var startFrom = _lastEndOfMessageSlice == null ? 0 : 1;
 
             _firstBufferRequest = false;
