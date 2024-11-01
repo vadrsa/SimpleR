@@ -18,6 +18,23 @@ public class FrameBufferWriterTests
     }
 
     [Fact]
+    public void EmptyAdvance_ShouldBeCorrect()
+    {
+        // Advance the writer by the number of bytes written
+        _frameWriter.Advance(0);
+
+        // Finish writing the last frame
+        _frameWriter.FinishLastFrame(true);
+
+        // Get the written bytes as an array
+        var result = _bufferWriter.WrittenMemory.ToArray();
+
+        // Assert that the result is as expected
+        result.Should()
+            .BeEquivalentTo(new byte[] { 0, 0, 0, 0, 1 });
+    }
+
+    [Fact]
     public void WriteTwoFrames_UsingMemory_ShouldBeCorrect()
     {
         // Get memory from frame writer
