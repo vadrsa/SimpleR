@@ -72,5 +72,4 @@ public class PingPongCustomTextProtocolTests : IClassFixture<WebApplicationFacto
             client.Dispose();
         }
     }
-    
 }

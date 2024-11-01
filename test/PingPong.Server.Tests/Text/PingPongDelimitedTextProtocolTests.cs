@@ -81,4 +81,30 @@ public class PingPongDelimitedTextProtocolTests : IClassFixture<WebApplicationFa
             client.Dispose();
         }
     }
+    
+    [Fact]
+    public async Task SendEmptyMessage_GetBack()
+    {
+        // Arrange
+        var receivedQueue = new List<string?>();
+        var (client, socket) = await _factory.Server.ConnectWebsocketAsync(_route);
+        try
+        {
+            using var sub = client.MessageReceived.Subscribe((message) => { receivedQueue.Add(message.Text); });
+            await socket.SendAsync(new ArraySegment<byte>([], 0, 0), WebSocketMessageType.Text, true,
+                CancellationToken.None);
+            await socket.SendAsync(new ArraySegment<byte>([], 0, 0), WebSocketMessageType.Text, true,
+                CancellationToken.None);
+            
+            await WaitHelpers.WaitFor(() => receivedQueue.Count == 2);
+
+            receivedQueue.Should().HaveCount(2);
+            receivedQueue[0].Should().Be("");
+            receivedQueue[1].Should().Be("");
+        }
+        finally
+        {
+            client.Dispose();
+        }
+    }
 }

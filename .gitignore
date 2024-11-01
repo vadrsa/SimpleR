@@ -44,3 +44,5 @@ UpgradeLog.htm
 *.svclog
 mono_crash.*.json
 mono_crash.*.blob
+
+autobahn/reports/*
