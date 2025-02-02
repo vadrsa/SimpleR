@@ -66,4 +66,27 @@ public class PingPongDelimitedBinaryProtocolTests : IClassFixture<WebApplication
             client.Dispose();
         }
     }
+    
+    [Fact]
+    public async Task SendEmptyMessage_GetReversed()
+    {
+        // Arrange
+        var receivedQueue = new List<byte[]?>();
+        var (client, socket) = await _factory.Server.ConnectWebsocketAsync(_route);
+        try
+        {
+            using var sub = client.MessageReceived.Subscribe((message) => { receivedQueue.Add(message.Binary); });
+
+            await socket.SendAsync(ArraySegment<byte>.Empty, WebSocketMessageType.Binary,
+                true, CancellationToken.None);
+            await WaitHelpers.WaitFor(() => receivedQueue.Any());
+
+            receivedQueue.Should().HaveCount(1);
+            receivedQueue[0].Should().BeEmpty();
+        }
+        finally
+        {
+            client.Dispose();
+        }
+    }
 }
