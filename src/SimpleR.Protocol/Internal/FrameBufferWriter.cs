@@ -162,13 +162,6 @@ namespace SimpleR.Protocol.Internal
         /// </summary>
         /// <param name="sizeHint">The original size hint</param>
         /// <returns>The adjusted size hint</returns>
-        private int AdjustSizeHint(int sizeHint)
-        {
-            if (sizeHint != 0 && sizeHint < FrameHelpers.IntegerLengthEncodedByteCount)
-            {
-                sizeHint = FrameHelpers.IntegerLengthEncodedByteCount + 1;
-            }
-            return sizeHint;
-        }
+        private static int AdjustSizeHint(int sizeHint) => sizeHint + FrameHelpers.IntegerLengthEncodedByteCount + 1;
     }
 }
