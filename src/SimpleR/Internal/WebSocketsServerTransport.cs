@@ -136,24 +136,29 @@ internal sealed partial class WebSocketsServerTransport : IHttpTransport
             while (!token.IsCancellationRequested)
             {
                 // Do a 0 byte read so that idle connections don't allocate a buffer when waiting for a read
-                var result = await socket.ReceiveAsync(Memory<byte>.Empty, token);
+                var receiveResult = await socket.ReceiveAsync(Memory<byte>.Empty, token);
 
-                if (result.MessageType == WebSocketMessageType.Close)
-                {
-                    _gracefulClose = true;
-                    return;
-                }
-
-                var writer = _options.FramePackets ? (IBufferWriter<byte>)new FrameBufferWriter(_application.Output) : _application.Output;
-                var memory = writer.GetMemory();
-                
-                var receiveResult = await socket.ReceiveAsync(memory, token);
-                
-                // Need to check again for netcoreapp3.0 and later because a close can happen between a 0-byte read and the actual read
                 if (receiveResult.MessageType == WebSocketMessageType.Close)
                 {
                     _gracefulClose = true;
                     return;
+                }
+                
+                var writer = _options.FramePackets ? (IBufferWriter<byte>)new FrameBufferWriter(_application.Output) : _application.Output;
+
+                // if the empty read is a full message, proceed to frame+flush
+                if (!receiveResult.EndOfMessage)
+                {
+                    var memory = writer.GetMemory();
+                    
+                    receiveResult = await socket.ReceiveAsync(memory, token);
+                    
+                    // Need to check again for netcoreapp3.0 and later because a close can happen between a 0-byte read and the actual read
+                    if (receiveResult.MessageType == WebSocketMessageType.Close)
+                    {
+                        _gracefulClose = true;
+                        return;
+                    }
                 }
                 
                 Log.MessageReceived(_logger, receiveResult.MessageType, receiveResult.Count, receiveResult.EndOfMessage);
