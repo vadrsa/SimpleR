@@ -4,6 +4,6 @@
     <PackageVersion Include="SimpleR.Protocol" Version="$(PackageVersion)" />
     <PackageVersion Include="SimpleR" Version="$(PackageVersion)" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="[5.0.0,)" />
-    <PackageVersion Include="System.Text.Json" Version="[6.0.0,)" />
+    <PackageVersion Include="System.Text.Json" Version="[7.0.0,)" />
   </ItemGroup>
 </Project>
