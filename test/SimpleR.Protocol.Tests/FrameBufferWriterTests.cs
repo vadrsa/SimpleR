@@ -17,6 +17,7 @@ public class FrameBufferWriterTests
         _frameWriter = new FrameBufferWriter(_bufferWriter);
     }
 
+
     [Fact]
     public void WriteTwoFrames_UsingMemory_ShouldBeCorrect()
     {
@@ -46,7 +47,25 @@ public class FrameBufferWriterTests
         result.Should()
             .BeEquivalentTo(new byte[] { 0, 0, 0, 5, 1, 2, 3, 4, 5, 0 }.Concat(new byte[] { 0, 0, 0, 2, 6, 7, 1 }));
     }
+    
+    
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(100)]
+    [InlineData(1000)]
+    [InlineData(10000)]
+    public void ProvideSizeHint_LengthIsGreaterThenOrEqual(int sizeHint)
+    {
+        // Get memory from frame writer
+        var memory = _frameWriter.GetMemory(sizeHint);
 
+        // Assert that the length is greater then or equal to sizeHint
+        memory.Length.Should().BeGreaterOrEqualTo(sizeHint);
+    }
+    
     [Fact]
     public void WriteTwoFrames_UsingSpan_ShouldBeCorrect()
     {
