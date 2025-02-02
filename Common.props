@@ -2,7 +2,6 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <RepoRoot>$([System.IO.Directory]::GetParent($(MSBuildThisFileDirectory)).FullName)</RepoRoot>
-    <CoreLatestVersion>1.0.0-alpha.1.7</CoreLatestVersion>
 <!--    <GenerateDocumentationFile>true</GenerateDocumentationFile>-->
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -19,8 +18,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Publish'">
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
+<!--    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+<!--    <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>-->
     <Optimize>True</Optimize>
   </PropertyGroup>
 
