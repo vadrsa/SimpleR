@@ -6,6 +6,11 @@ namespace SimpleR.Ocpp;
 public enum OcppErrorCode
 {
     /// <summary>
+    /// Requested Action is not known by receiver
+    /// </summary>
+    NotImplemented,
+
+    /// <summary>
     /// Requested Action is recognized but not supported by the receiver
     /// </summary>
     NotSupported,
