@@ -34,7 +34,7 @@ internal static class ConnectionEndpointRouteBuilderExtensions
         if (options.WebSockets.KeepAliveTimeout is not null)
             webSocketOptions.KeepAliveTimeout = (TimeSpan)options.WebSockets.KeepAliveTimeout;
 
-        app.UseWebSockets();
+        app.UseWebSockets(webSocketOptions);
         app.Run(c => dispatcher.ExecuteAsync(c, options, connectionDelegate));
         var executeHandler = app.Build();
 
