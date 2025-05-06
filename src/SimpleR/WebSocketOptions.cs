@@ -29,8 +29,10 @@ public class WebSocketOptions
     /// </summary>
     public TimeSpan? KeepAliveInterval { get; set; }
 
+#if NET9_0_OR_GREATER
     /// <summary>
     /// The time to wait for a Pong frame response after sending a Ping frame. If the time is exceeded the websocket will be aborted.
     /// </summary>
     public TimeSpan? KeepAliveTimeout { get; set; }
+#endif
 }
