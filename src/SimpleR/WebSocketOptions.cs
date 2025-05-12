@@ -23,4 +23,16 @@ public class WebSocketOptions
     public TransferFormat TransferFormat { get; set; } = TransferFormat.Text;
     
     internal bool FramePackets { get; set; }
+
+    /// <summary>
+    /// The interval to send keep-alive frames. This is a heart-beat that keeps the connection alive.
+    /// </summary>
+    public TimeSpan? KeepAliveInterval { get; set; }
+
+#if NET9_0_OR_GREATER
+    /// <summary>
+    /// The time to wait for a Pong frame response after sending a Ping frame. If the time is exceeded the websocket will be aborted.
+    /// </summary>
+    public TimeSpan? KeepAliveTimeout { get; set; }
+#endif
 }

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <Description>Unit test project for PingPong SimpleR Server Scenario</Description>
-        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net6.0;net8.0;net9.0</TargetFrameworks>
         <IsTestProject>true</IsTestProject>
         <Configurations>Debug;Release;Publish</Configurations>
         <Platforms>AnyCPU</Platforms>
@@ -10,7 +10,7 @@
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" />
-        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="FluentAssertions" /> 
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="Websocket.Client" />

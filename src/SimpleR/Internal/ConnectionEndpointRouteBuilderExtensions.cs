@@ -26,7 +26,17 @@ internal static class ConnectionEndpointRouteBuilderExtensions
         
         // build the execute handler part of the protocol
         var app = endpoints.CreateApplicationBuilder();
-        app.UseWebSockets();
+
+        var webSocketOptions = new WebSocketOptions();
+        if (options.WebSockets.KeepAliveInterval is not null)
+            webSocketOptions.KeepAliveInterval = (TimeSpan)options.WebSockets.KeepAliveInterval;
+
+#if NET9_0_OR_GREATER
+        if (options.WebSockets.KeepAliveTimeout is not null)
+            webSocketOptions.KeepAliveTimeout = (TimeSpan)options.WebSockets.KeepAliveTimeout;
+#endif
+
+        app.UseWebSockets(webSocketOptions);
         app.Run(c => dispatcher.ExecuteAsync(c, options, connectionDelegate));
         var executeHandler = app.Build();
 
