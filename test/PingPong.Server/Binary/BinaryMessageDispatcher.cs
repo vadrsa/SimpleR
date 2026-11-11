@@ -16,6 +16,6 @@ public class BinaryMessageDispatcher : IWebSocketMessageDispatcher<PingPongBinar
 
     public async Task DispatchMessageAsync(IWebsocketConnectionContext<PingPongBinary> connection, PingPongBinary message)
     {
-        await connection.WriteAsync(new PingPongBinary{ Payload = message.Payload.Reverse().ToArray() });
+        await connection.WriteAsync(new PingPongBinary{ Payload = Enumerable.Reverse(message.Payload).ToArray() });
     }
 }
