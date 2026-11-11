@@ -16,7 +16,6 @@ using Nuke.Common.Utilities;
 using Nuke.Common.Utilities.Collections;
 using Serilog;
 using static Nuke.Common.EnvironmentInfo;
-using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 
 [SuppressMessage("ReSharper", "AllUnderscoreLocalParameterName")]
